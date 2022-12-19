@@ -9,7 +9,7 @@ const triageMessage = (messageId, mappedLabels) => {
     format: 'metadata',
   });
 
-  // * Apply labels — Important: Create the labels in Gmail first*
+  // * Apply labels — Important: Create the labels in Gmail first *
   let labelIds = [mappedLabels['🤖']]; // always apply the '🤖' label to avoid reprocessing messages
 
   // ** Leadership **
