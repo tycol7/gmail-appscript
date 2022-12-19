@@ -1,6 +1,6 @@
 const extractEmail = (str) => {
   const emailRegex = /<(\S+@\S+\.\S+)>/; // matches email addresses enclosed in angle brackets
-  const email = str.match(emailRegex);
+  const email = str?.match(emailRegex);
   return email ? email[1] : null; // return the captured group, not the full match
 };
 
@@ -39,7 +39,7 @@ const triageMessage = (messageId, mappedLabels) => {
   );
 
   // *** Asana / Google Docs mentions ***
-  let tagged = false;
+  let mentioned = false;
   const asanaOrGoogle = new Set([
     'no-reply@asana.com',
     'comments-noreply@docs.google.com',
@@ -52,7 +52,7 @@ const triageMessage = (messageId, mappedLabels) => {
       const messageBodyDecoded = messageBody.raw
         .map((x) => String.fromCharCode(x))
         .join('');
-      tagged =
+      mentioned =
         messageBodyDecoded.includes('mentioned you') ||
         messageBodyDecoded.includes('@me@company.com');
     } catch (error) {
@@ -60,7 +60,8 @@ const triageMessage = (messageId, mappedLabels) => {
     }
   }
 
-  if (addressedToMentionAt || tagged) labelIds.push(mappedLabels['Mentions']);
+  if (addressedToMentionAt || mentioned)
+    labelIds.push(mappedLabels['Mentions']);
 
   // ** PRs **
   let archiveEmail = false;
@@ -89,7 +90,7 @@ const triageMessage = (messageId, mappedLabels) => {
   }
 
   // * Asana *
-  if (fromEmail === 'no-reply@asana.com' && !tagged) {
+  if (fromEmail === 'no-reply@asana.com' && !mentioned) {
     Logger.log(
       `Marking ${subject} for archive, since it is from Asana and does not mention you.`
     );
