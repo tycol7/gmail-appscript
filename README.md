@@ -23,7 +23,8 @@ Gmail's filters don't offer this granular control. Enter Google Apps Script.
 
 ## Setup
 
-1. Copy and adjust the code in `code.js`
+1. Copy and adjust the code in
+   [`code.js`](https://github.com/tycol7/gmail-appscript/blob/main/code.js)
    - Replace rules and names to suit your needs
 2. Create a new project at https://script.google.com
 3. Add the Gmail service to your project
