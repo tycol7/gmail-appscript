@@ -40,19 +40,24 @@ const triageMessage = (messageId, mappedLabels) => {
 
   // *** Asana / Google Docs mentions ***
   let tagged = false;
-  if (
-    fromEmail === 'no-reply@asana.com' ||
-    fromEmail === 'comments-noreply@docs.google.com'
-  ) {
-    const messageBody = Gmail.Users.Messages.get('me', messageId, {
-      format: 'raw',
-    });
-    const messageBodyDecoded = messageBody.raw
-      .map((x) => String.fromCharCode(x))
-      .join('');
-    tagged =
-      messageBodyDecoded.includes('mentioned you') ||
-      messageBodyDecoded.includes('@me@company.com');
+  const asanaOrGoogle = new Set([
+    'no-reply@asana.com',
+    'comments-noreply@docs.google.com',
+  ]);
+  if (asanaOrGoogle.has(fromEmail)) {
+    try {
+      const messageBody = Gmail.Users.Messages.get('me', messageId, {
+        format: 'raw',
+      });
+      const messageBodyDecoded = messageBody.raw
+        .map((x) => String.fromCharCode(x))
+        .join('');
+      tagged =
+        messageBodyDecoded.includes('mentioned you') ||
+        messageBodyDecoded.includes('@me@company.com');
+    } catch (error) {
+      Logger.log(`Messages.get() API failed with error ${error.toString()}`);
+    }
   }
 
   if (addressedToMentionAt || tagged) labelIds.push(mappedLabels['Mentions']);
