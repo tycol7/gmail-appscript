@@ -30,11 +30,11 @@ const triageMessage = (messageId, mappedLabels) => {
   // ** Mentions **
 
   // *** GitHub mentions ***
-  const toValue = messageHeader.payload.headers
-    .filter((header) => header.name === 'To')
+  const ccValue = messageHeader.payload.headers
+    .filter((header) => header.name === 'Cc')
     .pop().value;
-  const toValues = toValue.split(',');
-  const addressedToMentionAt = toValues.some(
+  const ccValues = ccValue.split(',');
+  const addressedToMentionAt = ccValues.some(
     (value) => extractEmail(value) === 'mention@noreply.github.com'
   );
 
