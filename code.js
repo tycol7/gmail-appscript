@@ -34,12 +34,12 @@ const triageMessage = (messageId, mappedLabels) => {
     .filter((header) => header.name === 'Cc')
     .pop().value;
   const ccValues = ccValue.split(',');
-  const addressedToMentionAt = ccValues.some(
+  const mentionAtCced = ccValues.some(
     (value) => extractEmail(value) === 'mention@noreply.github.com'
   );
 
   // *** Asana / Google Docs mentions ***
-  let mentioned = false;
+  let mentionedInBody = false;
   const asanaOrGoogle = new Set([
     'no-reply@asana.com',
     'comments-noreply@docs.google.com',
@@ -52,7 +52,7 @@ const triageMessage = (messageId, mappedLabels) => {
       const messageBodyDecoded = messageBody.raw
         .map((x) => String.fromCharCode(x))
         .join('');
-      mentioned =
+      mentionedInBody =
         messageBodyDecoded.includes('mentioned you') ||
         messageBodyDecoded.includes('@me@company.com');
     } catch (error) {
@@ -60,7 +60,7 @@ const triageMessage = (messageId, mappedLabels) => {
     }
   }
 
-  if (addressedToMentionAt || mentioned)
+  if (mentionAtCced || mentionedInBody)
     labelIds.push(mappedLabels['Mentions']);
 
   // ** PRs **
@@ -90,7 +90,7 @@ const triageMessage = (messageId, mappedLabels) => {
   }
 
   // * Asana *
-  if (fromEmail === 'no-reply@asana.com' && !mentioned) {
+  if (fromEmail === 'no-reply@asana.com' && !mentionedInBody) {
     Logger.log(
       `Marking ${subject} for archive, since it is from Asana and does not mention you.`
     );
